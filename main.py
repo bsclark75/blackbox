@@ -12,7 +12,7 @@ Enter HELP to see instructions.
 """
 
 grid = [[" " for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
-mines = {(2, 3), (5, 5), (6, 1)}  # Example hidden atoms
+mines = {(2, 5), (6, 3), (1, 7)}  # Example hidden atoms
 
 def display_grid():
     # Print top column numbers
@@ -96,31 +96,30 @@ def follow_ray(start, direction):
         mine1 = diag1 in mines
         mine2 = diag2 in mines
 
-        print(f"Ray at ({x},{y}) moving ({dx},{dy})")
+        print(f"Ray at ({x},{y}) moving ({dx},{dy}), diag1={diag1}, diag2={diag2}, mine1={mine1}, mine2={mine2}")
 
         if mine1 and mine2:
             return "Reflected"
         elif mine1:
             # Diagonal to upper-right (relative to direction)
-            if (dx, dy) == (0, 1):      # →
+            if (dx, dy) == (0, 1):      # → (Moving right)
                 dx, dy = -1, 0          # go ↑
-            elif (dx, dy) == (0, -1):   # ←
+            elif (dx, dy) == (0, -1):   # ← (Moving left)
                 dx, dy = -1, 0          # go ↑
-            elif (dx, dy) == (1, 0):    # ↓
+            elif (dx, dy) == (1, 0):    # ↓ (Moving down)
                 dx, dy = 0, -1          # go ←
-            elif (dx, dy) == (-1, 0):   # ↑
+            elif (dx, dy) == (-1, 0):   # ↑ (Moving up)
                 dx, dy = 0, -1          # go ←
         elif mine2:
             # Diagonal to lower-left (relative to direction)
-            if (dx, dy) == (0, 1):      # →
-                dx, dy = 1, 0           # go ↓
-            elif (dx, dy) == (0, -1):   # ←
-                dx, dy = 1, 0           # go ↓
-            elif (dx, dy) == (1, 0):    # ↓
-                dx, dy = 0, 1           # go →
-            elif (dx, dy) == (-1, 0):   # ↑
-                dx, dy = 0, 1           # go →
-
+            if (dx, dy) == (0, 1):      # → (Moving right)
+                dx, dy = 1, 0           # go ↓ (down)
+            elif (dx, dy) == (0, -1):   # ← (Moving left)
+                dx, dy = 1, 0           # go ↓ (down)
+            elif (dx, dy) == (1, 0):    # ↓ (Moving down)
+                dx, dy = 0, -1          # go ← (left)
+            elif (dx, dy) == (-1, 0):   # ↑ (Moving up)
+                dx, dy = 0, -1          # go ← (left)
 
         # Detect potential infinite loop
         if (x, y, dx, dy) in visited:
@@ -139,7 +138,6 @@ def trace_ray(entry_label):
 
     result = follow_ray(start, direction)
     print(f"{entry_label} → {result}")
-
 
 def play_game():
     while True:
@@ -162,11 +160,10 @@ def play_game():
             print("Invalid input.")
 
 def main():
-    os.system('clear')
+    os.system('clear' if os.name == 'posix' else 'cls')
     print("Welcome to text Blackbox!")
     print(GAME_INSTRUCTIONS)
     play_game()
 
 if __name__ == "__main__":
     main()
-

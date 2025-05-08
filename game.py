@@ -5,7 +5,7 @@ from functions import label_to_coord_and_dir
 
 class Game:
     def __init__(self):
-        self.grid = Grid()
+        self.grid = Grid(8, {(2, 5), (6, 3), (1, 7)})
         self.game_over = False
 
     def start(self):

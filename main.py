@@ -1,6 +1,7 @@
 import os
 from Constants import *
 from grid import Grid
+from ray import Ray
 
 
 mines = {(2, 5), (6, 3), (1, 7)}  # Example hidden atoms
@@ -38,73 +39,15 @@ def coord_to_label(pos):
         return LETTERS[x + GRID_SIZE]
     return "?"
 
-def follow_ray(start, direction):
-    x, y = start
-    dx, dy = direction
-    visited = set()
 
-    while True:
-        # If we're about to step outside, this is the exit point
-        if not (0 <= x < GRID_SIZE and 0 <= y < GRID_SIZE):
-            return coord_to_label((x, y))
-
-        # Direct hit
-        if (x, y) in mines:
-            return "Absorbed"
-
-        # Check diagonal influence BEFORE moving
-        # Compute next cell (where ray is headed)
-        next_x = x + dx
-        next_y = y + dy
-
-        # Check diagonals from the *next* cell
-        diag1 = (next_x + dy, next_y - dx)  # top-right
-        diag2 = (next_x - dy, next_y + dx)  # bottom-left
-
-        mine1 = diag1 in mines
-        mine2 = diag2 in mines
-
-        print(f"Ray at ({x},{y}) moving ({dx},{dy}), diag1={diag1}, diag2={diag2}, mine1={mine1}, mine2={mine2}")
-
-        if mine1 and mine2:
-            return "Reflected"
-        elif mine1:
-            # Diagonal to upper-right (relative to direction)
-            if (dx, dy) == (0, 1):      # → (Moving right)
-                dx, dy = -1, 0          # go ↑
-            elif (dx, dy) == (0, -1):   # ← (Moving left)
-                dx, dy = -1, 0          # go ↑
-            elif (dx, dy) == (1, 0):    # ↓ (Moving down)
-                dx, dy = 0, -1          # go ←
-            elif (dx, dy) == (-1, 0):   # ↑ (Moving up)
-                dx, dy = 0, -1          # go ←
-        elif mine2:
-            # Diagonal to lower-left (relative to direction)
-            if (dx, dy) == (0, 1):      # → (Moving right)
-                dx, dy = 1, 0           # go ↓ (down)
-            elif (dx, dy) == (0, -1):   # ← (Moving left)
-                dx, dy = 1, 0           # go ↓ (down)
-            elif (dx, dy) == (1, 0):    # ↓ (Moving down)
-                dx, dy = 0, -1          # go ← (left)
-            elif (dx, dy) == (-1, 0):   # ↑ (Moving up)
-                dx, dy = 0, -1          # go ← (left)
-
-        # Detect potential infinite loop
-        if (x, y, dx, dy) in visited:
-            return "Loop"
-        visited.add((x, y, dx, dy))
-
-        # Now move
-        x += dx
-        y += dy
-
-def trace_ray(entry_label):
+def trace_ray(entry_label,grid):
     start, direction = label_to_coord_and_dir(entry_label)
     if not start:
         print("Invalid entry label.")
         return
 
-    result = follow_ray(start, direction)
+    ray = Ray(start,direction,grid)
+    result = ray.move()
     print(f"{entry_label} → {result}")
 
 def play_game():
@@ -122,7 +65,7 @@ def play_game():
             print("Quitting game.")
             break
         elif user_input in LETTERS or user_input.isdigit():
-            trace_ray(user_input)
+            trace_ray(user_input,grid)
         elif len(user_input) == 2 and user_input[0] in LETTERS and user_input[1].isdigit():
             guess_atom(user_input, grid)
         else:

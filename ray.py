@@ -1,5 +1,5 @@
 from functions import coord_to_label
-
+from Constants import GRID_SIZE
 class Ray:
     def __init__(self, start, direction, grid):
         self.x, self.y = start
@@ -8,35 +8,60 @@ class Ray:
         self.visited = set()
 
     def move(self):
-        while True:
-            if not (0 <= self.x < self.grid.size and 0 <= self.y < self.grid.size):
-                return coord_to_label((self.x, self.y))  # Exit point
+       while True:
+        # If we're about to step outside, this is the exit point
+        if not (0 <= self.x < GRID_SIZE and 0 <= self.y < GRID_SIZE):
+            return coord_to_label((self.x, self.y))
 
-            if (self.x, self.y) in self.grid.mines:
-                return "Absorbed"
+        # Direct hit
+        if (self.x, self.y) in self.grid.mines:
+            return "Absorbed"
 
-            # Check diagonals relative to current position
-            diag1 = (self.x + self.dy, self.y - self.dx)
-            diag2 = (self.x - self.dy, self.y + self.dx)
+        # Check diagonal influence BEFORE moving
+        # Compute next cell (where ray is headed)
+        next_x = self.x + self.dx
+        next_y = self.y + self.dy
 
-            mine1 = diag1 in self.grid.mines
-            mine2 = diag2 in self.grid.mines
+        # Check diagonals from the *next* cell
+        diag1 = (next_x + self.dy, next_y - self.dx)  # top-right
+        diag2 = (next_x - self.dy, next_y + self.dx)  # bottom-left
 
-            print(f"Ray at ({self.x},{self.y}) moving ({self.dx},{self.dy}), diag1={diag1}, diag2={diag2}, mine1={mine1}, mine2={mine2}")
+        mine1 = diag1 in self.grid.mines
+        mine2 = diag2 in self.grid.mines
 
-            if mine1 and mine2:
-                return "Reflected"
-            elif mine1:
-                self.deflect_left()
-            elif mine2:
-                self.deflect_right()
+        print(f"Ray at ({self.x},{self.y}) moving ({self.dx},{self.dy}), diag1={diag1}, diag2={diag2}, mine1={mine1}, mine2={mine2}")
 
-            if (self.x, self.y, self.dx, self.dy) in self.visited:
-                return "Loop"
-            self.visited.add((self.x, self.y, self.dx, self.dy))
+        if mine1 and mine2:
+            return "Reflected"
+        elif mine1:
+            # Diagonal to upper-right (relative to direction)
+            if (self.dx, self.dy) == (0, 1):      # → (Moving right)
+                self.dx, self.dy = -1, 0          # go ↑
+            elif (self.dx, self.dy) == (0, -1):   # ← (Moving left)
+                self.dx, self.dy = -1, 0          # go ↑
+            elif (self.dx, self.dy) == (1, 0):    # ↓ (Moving down)
+                self.dx, self.dy = 0, -1          # go ←
+            elif (self.dx, self.dy) == (-1, 0):   # ↑ (Moving up)
+                self.dx, self.dy = 0, -1          # go ←
+        elif mine2:
+            # Diagonal to lower-left (relative to direction)
+            if (self.dx, self.dy) == (0, 1):      # → (Moving right)
+                self.dx, self.dy = 1, 0           # go ↓ (down)
+            elif (self.dx, self.dy) == (0, -1):   # ← (Moving left)
+                self.dx, self.dy = 1, 0           # go ↓ (down)
+            elif (self.dx, self.dy) == (1, 0):    # ↓ (Moving down)
+                self.dx, self.dy = 0, -1          # go ← (left)
+            elif (self.dx, self.dy) == (-1, 0):   # ↑ (Moving up)
+                self.dx, self.dy = 0, -1          # go ← (left)
 
-            self.x += self.dx
-            self.y += self.dy
+        # Detect potential infinite loop
+        if (self.x, self.y, self.dx, self.dy) in self.visited:
+            return "Loop"
+        self.visited.add((self.x, self.y, self.dx, self.dy))
+
+        # Now move
+        self.x += self.dx
+        self.y += self.dy
 
     def deflect_left(self):
         if (self.dx, self.dy) == (0, 1):      # →

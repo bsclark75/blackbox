@@ -1,43 +1,11 @@
-import random
-import string
 import os
+from Constants import *
+from grid import Grid
 
-GRID_SIZE = 8
-LETTERS = "ABCDEFGHIJKLMNOP"
-GAME_INSTRUCTIONS = """
-Enter a letter (A–P) or number (0–15) to fire a shot.
-Enter something like B4 to guess an atom.
-Enter S to show the answer grid and quit.
-Enter HELP to see instructions.
-"""
 
-grid = [[" " for _ in range(GRID_SIZE)] for _ in range(GRID_SIZE)]
 mines = {(2, 5), (6, 3), (1, 7)}  # Example hidden atoms
 
-def display_grid():
-    # Print top column numbers
-    col_labels_top = "   " + " ".join(f"{i:>2}" for i in range(GRID_SIZE))
-    print(col_labels_top)
-
-    # Print rows with left and right side labels
-    for i in range(GRID_SIZE):
-        row_label_left = LETTERS[i]
-        row_label_right = LETTERS[i + GRID_SIZE]
-        row_cells = " ".join(f"{cell:>2}" for cell in grid[i])
-        print(f"{row_label_left} |{row_cells}| {row_label_right}")
-
-    # Print bottom column numbers
-    col_labels_bottom = "   " + " ".join(f"{i + GRID_SIZE:>2}" for i in range(GRID_SIZE))
-    print(col_labels_bottom)
-
-
-def show_answers():
-    for x, y in mines:
-        grid[x][y] = "*"
-    display_grid()
-    print("Atoms revealed.")
-
-def guess_atom(label):
+def guess_atom(label,grid):
     x = LETTERS.index(label[0])
     y = int(label[1])
     grid[x][y] = "?"
@@ -140,14 +108,15 @@ def trace_ray(entry_label):
     print(f"{entry_label} → {result}")
 
 def play_game():
+    grid = Grid(8, {(2, 5), (6, 3), (1, 7)})
     while True:
-        display_grid()
+        grid.display()
         user_input = input("Enter command (A–P, 0–15, HELP, S, Q): ").strip().upper()
 
         if user_input == "HELP":
             print(GAME_INSTRUCTIONS)
         elif user_input == "S":
-            show_answers()
+            grid.reveal_mines()
             break
         elif user_input == "Q":
             print("Quitting game.")
@@ -155,7 +124,7 @@ def play_game():
         elif user_input in LETTERS or user_input.isdigit():
             trace_ray(user_input)
         elif len(user_input) == 2 and user_input[0] in LETTERS and user_input[1].isdigit():
-            guess_atom(user_input)
+            guess_atom(user_input, grid)
         else:
             print("Invalid input.")
 

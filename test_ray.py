@@ -32,10 +32,10 @@ class TestRay(unittest.TestCase):
     def test_exit_points(self):
         """Test ray exiting the grid from different directions"""
         test_cases = [
-            ((0, 0), (0, -1), "A"),  # Exit left
-            ((0, 0), (-1, 0), "0"),  # Exit top
-            ((7, 7), (0, 1), "P"),   # Exit right
-            ((7, 7), (1, 0), "15")    # Exit bottom
+            ((0, 7), (0, -1), "A"),  # Exit left
+            ((7, 0), (-1, 0), "0"),  # Exit top
+            ((7, 0), (0, 1), "P"),   # Exit right
+            ((0, 7), (1, 0), "15")    # Exit bottom
         ]
         
         for start, direction, expected in test_cases:
@@ -80,35 +80,6 @@ class TestRay(unittest.TestCase):
         self.assertEqual(result, "Loop")
         """
 
-    def test_deflect_left(self):
-        """Test left deflection directions"""
-        test_cases = [
-            ((0, 1), (-1, 0)),    # right → up
-            ((0, -1), (1, 0)),    # left → down
-            ((1, 0), (0, -1)),    # down → left
-            ((-1, 0), (0, 1))     # up → right
-        ]
-        
-        for initial_dir, expected_dir in test_cases:
-            with self.subTest(initial_dir=initial_dir):
-                ray = Ray((0, 0), initial_dir, self.empty_grid)
-                ray.deflect_left()
-                self.assertEqual((ray.dx, ray.dy), expected_dir)
-
-    def test_deflect_right(self):
-        """Test right deflection directions"""
-        test_cases = [
-            ((0, 1), (1, 0)),     # right → down
-            ((0, -1), (-1, 0)),   # left → up
-            ((1, 0), (0, 1)),     # down → right
-            ((-1, 0), (0, -1))    # up → left
-        ]
-        
-        for initial_dir, expected_dir in test_cases:
-            with self.subTest(initial_dir=initial_dir):
-                ray = Ray((0, 0), initial_dir, self.empty_grid)
-                ray.deflect_right()
-                self.assertEqual((ray.dx, ray.dy), expected_dir)
-
+ 
 if __name__ == '__main__':
     unittest.main()

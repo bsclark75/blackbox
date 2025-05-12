@@ -37,6 +37,7 @@ class Game:
 
     def trace_ray(self, entry_label):
         start, direction = label_to_coord_and_dir(entry_label)
+        #print(f"start is {start} moving in {direction} direction")
         if not start:
             print("Invalid entry label.")
             return

@@ -16,13 +16,13 @@ def label_to_coord_and_dir(label):
     if label in LETTERS:
         i = LETTERS.index(label)
         if i < GRID_SIZE:
-            return (i, 0), (0, 1)  # LEFT → RIGHT
+            return (i, -1), (0, 1)  # LEFT → RIGHT
         else:
-            return (i - GRID_SIZE, GRID_SIZE - 1), (0, -1)  # RIGHT → LEFT
+            return (i - GRID_SIZE, GRID_SIZE), (0, -1)  # RIGHT → LEFT
     elif label.isdigit():
         i = int(label)
         if i < GRID_SIZE:
-            return (0, i), (1, 0)  # TOP → DOWN
+            return (-1, i), (1, 0)  # TOP → DOWN
         elif i < GRID_SIZE * 2:
-            return (GRID_SIZE - 1, i - GRID_SIZE), (-1, 0)  # BOTTOM → UP
+            return (GRID_SIZE, i - GRID_SIZE), (-1, 0)  # BOTTOM → UP
     return None, None

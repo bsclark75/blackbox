@@ -1,10 +1,11 @@
-from Constants import LETTERS
+from Constants import LETTERS, MINE_COUNT
 
 class Grid:
     def __init__(self, size=8, mines=None):
         self.size = size
         self.grid = [[" " for _ in range(self.size)] for _ in range(self.size)]
         self.mines = set()
+        self.mark_count = MINE_COUNT
     
         if mines is not None:
             for mine in mines:
@@ -16,6 +17,7 @@ class Grid:
         self.mines.add((x, y))
 
     def display(self):
+        print(f"Mines left to mark: {self.mark_count}")
         col_labels_top = "   " + " ".join(f"{i:>2}" for i in range(self.size))
         print(col_labels_top)
 

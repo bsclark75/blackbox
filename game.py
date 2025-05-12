@@ -51,7 +51,9 @@ class Game:
         y = int(label[1])
         if self.grid.grid[x][y] == "?":
             self.grid.grid[x][y] = ""
+            self.grid.mark_count += 1
             print(f"Unmarked {label} as guessed atom.")
         else:
             self.grid.grid[x][y] = "?"
+            self.grid.mark_count -= 1
             print(f"Marked {label} as guessed atom.")

@@ -49,5 +49,9 @@ class Game:
     def guess_atom(self, label):
         x = LETTERS.index(label[0])
         y = int(label[1])
-        self.grid.grid[x][y] = "?"
-        print(f"Marked {label} as guessed atom.")
+        if self.grid.grid[x][y] == "?":
+            self.grid.grid[x][y] = ""
+            print(f"Unmarked {label} as guessed atom.")
+        else:
+            self.grid.grid[x][y] = "?"
+            print(f"Marked {label} as guessed atom.")

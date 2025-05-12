@@ -66,5 +66,14 @@ class TestGame(unittest.TestCase):
         self.assertEqual(self.game.grid.grid[0][1], "?")
         mock_print.assert_called_with("Marked A1 as guessed atom.")
 
+    @patch('builtins.print')
+    def test_unmark_guess_atom(self, mock_print):
+        self.game.grid.grid = [[None for _ in range(8)] for _ in range(8)]
+        self.game.guess_atom("A1")
+        self.assertEqual(self.game.grid.grid[0][1], "?")
+        self.game.guess_atom("A1")
+        self.assertEqual(self.game.grid.grid[0][1], "")
+        mock_print.assert_called_with("Unmarked A1 as guessed atom.")
+
 if __name__ == '__main__':
     unittest.main()

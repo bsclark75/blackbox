@@ -31,7 +31,10 @@ class Grid:
         print(col_labels_bottom)
 
     def reveal_mines(self):
+        correct_guess = 0
         for x, y in self.mines:
+            if self.grid[x][y] == "?":
+                correct_guess += 1
             self.grid[x][y] = "*"
         self.display()
-        print("Atoms revealed.")
+        print(f"You guessed {correct_guess} out of {MINE_COUNT}.")

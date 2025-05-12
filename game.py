@@ -1,11 +1,12 @@
-from Constants import GAME_INSTRUCTIONS, LETTERS
+from Constants import *
 from grid import Grid
 from ray import Ray
-from functions import label_to_coord_and_dir
+from functions import label_to_coord_and_dir, randomize_mines
 
 class Game:
     def __init__(self):
-        self.grid = Grid(8, {(2, 5), (6, 3), (1, 7)})
+        mines = randomize_mines(GRID_SIZE, MINE_COUNT)
+        self.grid = Grid(8, mines)
         self.game_over = False
 
     def start(self):

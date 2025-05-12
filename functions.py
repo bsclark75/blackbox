@@ -1,4 +1,15 @@
 from Constants import GRID_SIZE,LETTERS
+import random
+
+def randomize_mines(grid_size=8, mine_count=10):
+    """Randomly generate unique mine locations on a grid."""
+    if mine_count > grid_size ** 2:
+        raise ValueError("Too many mines for the given grid size.")
+
+    all_positions = [(row, col) for row in range(grid_size) for col in range(grid_size)]
+    random.shuffle(all_positions)
+    return all_positions[:mine_count]
+
 
 def coord_to_label(pos):
     x, y = pos
